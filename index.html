@@ -52,6 +52,10 @@ table{border-collapse:separate;border-spacing:3px;font-size:12px}
 th{font-weight:600;color:var(--mut);padding:0 4px}
 .chip{border:0;border-radius:6px;min-width:34px;padding:7px 2px;font:700 12px inherit;font-family:inherit}
 .hide{display:none}
+.sec.sup h3{background:var(--hd);color:#fff}
+.su{align-items:center}
+.su .chip{flex:0 0 78px;text-align:center;padding:6px 2px}
+.su .nm{flex:1;font-weight:600}
 </style>
 </head>
 <body>
@@ -64,7 +68,8 @@ th{font-weight:600;color:var(--mut);padding:0 4px}
 const DEF={start:"2026-11-01",
 emp:[["S1015","Santoso Aji","C","A"],["S1043","Rahmatullah","A","B"],["S1103","Syahrijal","B","A"],["S1014","Iwan Nurdianto","C","B"],["S1108","Abdurrosyid","D","A"],["S1419","Khanet Dias Suganda","D","B"],["S1421","Achmad Fajrul Falah","A","A"],["S1162","Wanda Andriana","A","B"],["S1160","Jumadi Triyatno","C","A"],["S1107","Ahmad Syauqibika","B","B"],["S1303","Supardi","A","A"],["S1156","Kristiawadi","D","B"],["SC1318","Muhammad Ilham P","B","B"]].map(a=>({nik:a[0],nama:a[1],gs:a[2],go:a[3]})),
 shift:{A:"III III OFF OFF I I II II".split(" "),B:"OFF OFF I I II II III III".split(" "),C:"I I II II III III OFF OFF".split(" "),D:"II II III III OFF OFF I I".split(" ")},
-out:{A:"I I I II II II II I I I I II II II".split(" "),B:"II II II I I I I II II II II I I I".split(" ")}};
+out:{A:"I I I II II II II I".split(" "),B:"II II II I I I I II".split(" ")},
+sup:{A:["Rama Iskandar"],B:["Akhmad Bintang D","M Fitra Riantono"],C:["Angga Ardiyantomo"],D:["Sungadi","Sophian Rumboko"]}};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const S=clone(DEF);
 const DN=["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
@@ -82,9 +87,15 @@ function status(e,t){const i=Math.round((t-parse(S.start))/864e5),sh=S.shift[e.g
 let tab="cari",sel=todayT(),ci=0,mon=Date.UTC(new Date(sel).getUTCFullYear(),new Date(sel).getUTCMonth(),1);
 const TABS=[["cari","Cari Tanggal"],["jadwal","Per Karyawan"]];
 
+function supOn(k){const i=Math.round((sel-parse(S.start))/864e5),g=Object.keys(S.shift).find(x=>S.shift[x][mod(i,S.shift[x].length)]===k);
+ return g?{g,n:(S.sup&&S.sup[g])||[]}:null}
+function vSup(){
+ return `<div class="sec sup"><h3><span>Shift Supervisor</span></h3><ul>`+[["I","Shift I"],["II","Shift II"],["III","Shift III"]].map(([k,l])=>{const r=supOn(k);
+  return `<li class="su"><span class="chip s-${k}">${l}</span><span class="nm">${r&&r.n.length?r.n.map(esc).join("<br>"):"-"}</span><small>${r?"Grup "+r.g:""}</small></li>`}).join("")+`</ul></div>`}
 function vCari(){
  let h=`<div class="bar"><button class="btn" data-step="-1">‹</button><input type="date" id="d" value="${iso(sel)}"><button class="btn" data-step="1">›</button><button class="btn pri" data-today>Hari Ini</button></div>`;
  h+=`<div class="date">${fmt(sel)}</div>`;
+ h+=vSup();
  if(sel<R0||sel>R1)h+=`<p class="mut">Di luar periode 1 Nov 2026 – 31 Okt 2027; pola tetap diteruskan.</p>`;
  [["I","Shift I"],["II","Shift II"],["OFF","OFF"]].forEach(([k,l])=>{
   const a=S.emp.filter(e=>status(e,sel)===k);
