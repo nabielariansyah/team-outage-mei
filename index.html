@@ -56,6 +56,7 @@ th{font-weight:600;color:var(--mut);padding:0 4px}
 .su{align-items:center}
 .su .chip{flex:0 0 78px;text-align:center;padding:6px 2px}
 .su .nm{flex:1;font-weight:600}
+.rl{font-size:12px;color:var(--mut)}
 </style>
 </head>
 <body>
@@ -66,7 +67,7 @@ th{font-weight:600;color:var(--mut);padding:0 4px}
 <main id="app"></main>
 <script>
 const DEF={start:"2026-11-01",
-emp:[["S1015","Santoso Aji","C","A"],["S1043","Rahmatullah","A","B"],["S1103","Syahrijal","B","A"],["S1014","Iwan Nurdianto","C","B"],["S1108","Abdurrosyid","D","A"],["S1419","Khanet Dias Suganda","D","B"],["S1421","Achmad Fajrul Falah","A","A"],["S1162","Wanda Andriana","A","B"],["S1160","Jumadi Triyatno","C","A"],["S1107","Ahmad Syauqibika","B","B"],["S1303","Supardi","A","A"],["S1156","Kristiawadi","D","B"],["SC1318","Muhammad Ilham P","B","B"]].map(a=>({nik:a[0],nama:a[1],gs:a[2],go:a[3]})),
+emp:[["S1015","Santoso Aji","C","A"],["S1043","Rahmatullah","A","B"],["S1103","Syahrijal","B","A"],["S1014","Iwan Nurdianto","C","B"],["S1108","Abdurrosyid","D","A"],["S1419","Khanet Dias Suganda","D","B"],["S1421","Achmad Fajrul Falah","A","A"],["S1162","Wanda Andriana","A","B"],["S1160","Jumadi Triyatno","C","A"],["S1107","Ahmad Syauqibika","B","B"],["S1303","Supardi","A","A"],["S1156","Kristiawadi","D","B"],["SC1318","Muhammad Ilham P","B","B"]].map(a=>({nik:a[0],nama:a[1],gs:a[2],go:a[3],role:({"Rahmatullah":"Watchman","Abdurrosyid":"Watchman","Khanet Dias Suganda":"Gas Checker","Wanda Andriana":"Gas Checker","Jumadi Triyatno":"Gas Checker","Ahmad Syauqibika":"Watchman"})[a[1]]||""})),
 shift:{A:"III III OFF OFF I I II II".split(" "),B:"OFF OFF I I II II III III".split(" "),C:"I I II II III III OFF OFF".split(" "),D:"II II III III OFF OFF I I".split(" ")},
 out:{A:"I I I II II II II I".split(" "),B:"II II II I I I I II".split(" ")},
 sup:{A:["Rama Iskandar"],B:["Akhmad Bintang D","M Fitra Riantono"],C:["Angga Ardiyantomo"],D:["Sungadi","Sophian Rumboko"]}};
@@ -99,7 +100,7 @@ function vCari(){
  if(sel<R0||sel>R1)h+=`<p class="mut">Di luar periode 1 Nov 2026 – 31 Okt 2027; pola tetap diteruskan.</p>`;
  [["I","Shift I"],["II","Shift II"],["OFF","OFF"]].forEach(([k,l])=>{
   const a=S.emp.filter(e=>status(e,sel)===k);
-  h+=`<div class="sec s${k}"><h3><span>${l}</span><span>${a.length} orang</span></h3>`+(a.length?`<ul>${a.map(e=>`<li><span>${esc(e.nama)}</span><small>${esc(e.nik)}</small></li>`).join("")}</ul>`:`<div class="none">Tidak ada</div>`)+`</div>`});
+  h+=`<div class="sec s${k}"><h3><span>${l}</span><span>${a.length} orang</span></h3>`+(a.length?`<ul>${a.map(e=>`<li><span>${esc(e.nama)}${e.role?` <small class="rl">(${esc(e.role)})</small>`:""}</span><small>${esc(e.nik)}</small></li>`).join("")}</ul>`:`<div class="none">Tidak ada</div>`)+`</div>`});
  const x=S.emp.filter(e=>["III","?"].includes(status(e,sel)));
  if(x.length)h+=`<p class="mut">Perlu dicek pola/grup: ${x.map(e=>esc(e.nama)).join(", ")}</p>`;
  return h}
