@@ -156,7 +156,7 @@ function vJadwal(){
  <div class="mnav"><button class="btn" data-mon="-1">‹</button><strong>${MN[m]} ${y}</strong><button class="btn" data-mon="1">›</button></div>
  <div class="cal">${c}</div>
  <p class="mut">Bulan ini: Shift I ${cnt.I||0} hari · Shift II ${cnt.II||0} hari · OFF ${cnt.OFF||0} hari. Ketuk tanggal untuk melihat siapa saja yang masuk hari itu.</p>
- <div style="text-align:right"><button class="btn pri" data-dl>Unduh Jadwal (JPG)</button></div>`}
+ <div style="text-align:right"><button class="btn pri" data-dl>Unduh Jadwal (jpg)</button></div>`}
 
 function render(){
  $("#nav").innerHTML=TABS.map(([k,l])=>`<button data-tab="${k}" class="${tab===k?"on":""}">${l}</button>`).join("");
