@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Jadwal Team Operation</title>
+<title>Jadwal Outage PT MEI</title>
 <style>
 :root{--bg:#f4f6fa;--card:#fff;--tx:#14213d;--mut:#667085;--bd:#dfe3ea;--hd:#1f3864;--g:#92d050;--b:#9dc3e6;--o:#eceff3;--or:#c00000;--ac:#ffc000;--in:#fff;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -67,7 +67,7 @@ th{font-weight:600;color:var(--mut);padding:0 4px}
 </head>
 <body>
 <header>
-<h1>Jadwal Operation (Forced Outage U1)</h1>
+<h1>Jadwal Outage PT MEI</h1>
 <nav id="nav"></nav>
 </header>
 <main id="app"></main>
@@ -104,6 +104,30 @@ document.addEventListener("click",ev=>{const t=ev.target;
  if(t&&t.tagName==="IMG"&&t.classList.contains("av")){const e=S.emp.find(x=>x.nama===t.dataset.n),d=document.createElement("div");d.className="lb";
   d.innerHTML=`<img alt="" src="${esc(t.src)}"><div><b>${esc(t.dataset.n)}</b>${e&&e.role?`<small>${esc(e.role)}</small>`:""}</div><i>Ketuk untuk menutup</i>`;
   d.onclick=()=>d.remove();document.body.appendChild(d)}});
+function dlJpg(){
+ if(!S.emp.length)return;
+ const e=S.emp[ci]||S.emp[0],d=new Date(mon),y=d.getUTCFullYear(),m=d.getUTCMonth(),first=d.getUTCDay(),n=new Date(Date.UTC(y,m+1,0)).getUTCDate();
+ const rows=Math.ceil((first+n)/7),Z=2,W=750,P=30,G=6,cw=(W-2*P-6*G)/7,ch=62,top=196,H=top+rows*(ch+G)+60;
+ const cv=document.createElement("canvas");cv.width=W*Z;cv.height=H*Z;const c=cv.getContext("2d");c.scale(Z,Z);
+ const FF="'Segoe UI',Roboto,Arial,sans-serif";
+ const rr=(x,y,w,h,r)=>{c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()};
+ c.fillStyle="#f4f6fa";c.fillRect(0,0,W,H);c.textBaseline="middle";c.textAlign="left";
+ c.fillStyle="#667085";c.font="13px "+FF;c.fillText("Karyawan",P,32);
+ rr(P,46,W-2*P,44,8);c.fillStyle="#fff";c.fill();c.strokeStyle="#dfe3ea";c.lineWidth=1;c.stroke();
+ c.fillStyle="#14213d";c.font="18px "+FF;c.fillText(e.nama,P+16,68);
+ c.textAlign="center";c.font="bold 21px "+FF;c.fillText(MN[m]+" "+y,W/2,132);
+ c.font="14px "+FF;c.fillStyle="#667085";DN.forEach((x,i)=>c.fillText(x.slice(0,3),P+i*(cw+G)+cw/2,172));
+ const col={I:"#92d050",II:"#9dc3e6",III:"#d9b8f0",OFF:"#eceff3"},cnt={};
+ for(let i=1;i<=n;i++){const t=Date.UTC(y,m,i),s=status(e,t),q=first+i-1,x=P+(q%7)*(cw+G),yy=top+Math.floor(q/7)*(ch+G);cnt[s]=(cnt[s]||0)+1;
+  rr(x,yy,cw,ch,10);c.fillStyle=col[s]||"#eceff3";c.fill();
+  c.fillStyle=s==="OFF"?"#c0504d":"#3a4452";c.font="13px "+FF;c.fillText(String(i),x+cw/2,yy+16);
+  c.fillStyle=s==="OFF"?"#c00000":"#14213d";c.font="bold 18px "+FF;c.fillText(s,x+cw/2,yy+40)}
+ c.textAlign="left";c.fillStyle="#667085";c.font="14px "+FF;
+ c.fillText("Bulan ini: Shift I "+(cnt.I||0)+" hari \u00b7 Shift II "+(cnt.II||0)+" hari \u00b7 OFF "+(cnt.OFF||0)+" hari",P,H-34);
+ c.textAlign="right";c.fillStyle="#98a2b3";c.font="12px "+FF;c.fillText("Jadwal Outage PT MEI",W-P,H-12);
+ const fn=("Jadwal_"+e.nama+"_"+MN[m]+"_"+y).replace(/[^\w\-]+/g,"_")+".jpg";
+ cv.toBlob(b=>{if(!b)return;const u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000)},"image/jpeg",.92)}
+document.addEventListener("click",ev=>{const b=ev.target&&ev.target.closest?ev.target.closest("button"):null;if(b&&b.dataset&&"dl" in b.dataset)dlJpg()});
 function supOn(k){const i=Math.round((sel-parse(S.start))/864e5),g=Object.keys(S.shift).find(x=>S.shift[x][mod(i,S.shift[x].length)]===k);
  return g?{g,n:(S.sup&&S.sup[g])||[]}:null}
 function vSup(){
@@ -131,7 +155,8 @@ function vJadwal(){
  return `<label>Karyawan<select id="ce">${S.emp.map((x,i)=>`<option value="${i}"${i===ci?" selected":""}>${esc(x.nama)}</option>`).join("")}</select></label>
  <div class="mnav"><button class="btn" data-mon="-1">‹</button><strong>${MN[m]} ${y}</strong><button class="btn" data-mon="1">›</button></div>
  <div class="cal">${c}</div>
- <p class="mut">Bulan ini: Shift I ${cnt.I||0} hari · Shift II ${cnt.II||0} hari · OFF ${cnt.OFF||0} hari. Ketuk tanggal untuk melihat siapa saja yang masuk hari itu.</p>`}
+ <p class="mut">Bulan ini: Shift I ${cnt.I||0} hari · Shift II ${cnt.II||0} hari · OFF ${cnt.OFF||0} hari. Ketuk tanggal untuk melihat siapa saja yang masuk hari itu.</p>
+ <div style="text-align:right"><button class="btn pri" data-dl>Unduh Jadwal (JPG)</button></div>`}
 
 function render(){
  $("#nav").innerHTML=TABS.map(([k,l])=>`<button data-tab="${k}" class="${tab===k?"on":""}">${l}</button>`).join("");
