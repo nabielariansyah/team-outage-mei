@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Jadwal Team Operation</title>
+<title>Jadwal Outage PT MEI</title>
 <style>
 :root{--bg:#f4f6fa;--card:#fff;--tx:#14213d;--mut:#667085;--bd:#dfe3ea;--hd:#1f3864;--g:#92d050;--b:#9dc3e6;--o:#eceff3;--or:#c00000;--ac:#ffc000;--in:#fff;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -57,11 +57,17 @@ th{font-weight:600;color:var(--mut);padding:0 4px}
 .su .chip{flex:0 0 78px;text-align:center;padding:6px 2px}
 .su .nm{flex:1;font-weight:600}
 .rl{font-size:12px;color:var(--mut)}
+.av{width:22px;height:22px;border-radius:50%;object-fit:cover;object-position:50% 20%;flex:0 0 auto;vertical-align:middle;margin-right:7px;background:var(--o)}
+.av.ph{display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--mut);cursor:default}
+.av:not(.ph){cursor:pointer}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.78);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;padding:20px;gap:12px;color:#fff;text-align:center}
+.lb img{width:min(80vw,340px);height:min(80vw,340px);border-radius:16px;object-fit:cover;background:#fff}
+.lb b{font-size:17px}.lb small{display:block;opacity:.85;font-size:14px}.lb i{font-style:normal;opacity:.6;font-size:12px}
 </style>
 </head>
 <body>
 <header>
-<h1>Jadwal Operation (Forced Outage U1)</h1>
+<h1>Jadwal Outage PT MEI</h1>
 <nav id="nav"></nav>
 </header>
 <main id="app"></main>
@@ -88,6 +94,16 @@ function status(e,t){const i=Math.round((t-parse(S.start))/864e5),sh=S.shift[e.g
 let tab="cari",sel=todayT(),ci=0,mon=Date.UTC(new Date(sel).getUTCFullYear(),new Date(sel).getUTCMonth(),1);
 const TABS=[["cari","Cari Tanggal"],["jadwal","Per Karyawan"]];
 
+const PH="foto/",EXT=[".jpg",".jpeg",".png",".webp"];
+const av=e=>`<img class="av" loading="lazy" alt="" data-n="${esc(e.nama)}" src="${PH}${encodeURIComponent(e.nama)}.jpg">`;
+document.addEventListener("error",ev=>{const im=ev.target;if(!im||!im.classList||!im.classList.contains("av"))return;
+ const i=(+im.dataset.i||0)+1;
+ if(i<EXT.length){im.dataset.i=i;im.src=PH+encodeURIComponent(im.dataset.n)+EXT[i]}
+ else{const s=document.createElement("span");s.className="av ph";s.textContent=(im.dataset.n||"?").trim().charAt(0);im.replaceWith(s)}},true);
+document.addEventListener("click",ev=>{const t=ev.target;
+ if(t&&t.tagName==="IMG"&&t.classList.contains("av")){const e=S.emp.find(x=>x.nama===t.dataset.n),d=document.createElement("div");d.className="lb";
+  d.innerHTML=`<img alt="" src="${esc(t.src)}"><div><b>${esc(t.dataset.n)}</b>${e&&e.role?`<small>${esc(e.role)}</small>`:""}</div><i>Ketuk untuk menutup</i>`;
+  d.onclick=()=>d.remove();document.body.appendChild(d)}});
 function supOn(k){const i=Math.round((sel-parse(S.start))/864e5),g=Object.keys(S.shift).find(x=>S.shift[x][mod(i,S.shift[x].length)]===k);
  return g?{g,n:(S.sup&&S.sup[g])||[]}:null}
 function vSup(){
@@ -100,7 +116,7 @@ function vCari(){
  if(sel<R0||sel>R1)h+=`<p class="mut">Di luar periode 1 Nov 2026 – 31 Okt 2027; pola tetap diteruskan.</p>`;
  [["I","Shift I"],["II","Shift II"],["OFF","OFF"]].forEach(([k,l])=>{
   const a=S.emp.filter(e=>status(e,sel)===k);
-  h+=`<div class="sec s${k}"><h3><span>${l}</span><span>${a.length} orang</span></h3>`+(a.length?`<ul>${a.map(e=>`<li><span>${esc(e.nama)}${e.role?` <small class="rl">(${esc(e.role)})</small>`:""}</span><small>${esc(e.nik)}</small></li>`).join("")}</ul>`:`<div class="none">Tidak ada</div>`)+`</div>`});
+  h+=`<div class="sec s${k}"><h3><span>${l}</span><span>${a.length} orang</span></h3>`+(a.length?`<ul>${a.map(e=>`<li><span>${av(e)}${esc(e.nama)}${e.role?` <small class="rl">(${esc(e.role)})</small>`:""}</span><small>${esc(e.nik)}</small></li>`).join("")}</ul>`:`<div class="none">Tidak ada</div>`)+`</div>`});
  const x=S.emp.filter(e=>["III","?"].includes(status(e,sel)));
  if(x.length)h+=`<p class="mut">Perlu dicek pola/grup: ${x.map(e=>esc(e.nama)).join(", ")}</p>`;
  return h}
